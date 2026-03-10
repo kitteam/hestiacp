@@ -32,6 +32,7 @@ if (isset($_GET['user']) && isset($_GET['token']) && ($user = $_GET['user']) && 
 
     if (($data = json_decode(implode('', $output), true)) && isset($data[$user]['RKEY'])) {
         if ($hash === hash('sha256', $data[$user]['RKEY'])) {
+
             // Update RKEY
             exec (HESTIA_CMD . "v-change-user-rkey ". $v_user, $output, $return_var);
 
@@ -39,17 +40,20 @@ if (isset($_GET['user']) && isset($_GET['token']) && ($user = $_GET['user']) && 
             $_SESSION["user"] = key($data);
             $_SESSION["LAST_ACTIVITY"] = time();
             $_SESSION["userContext"] = $data[$user]["ROLE"];
+            //$_SESSION["userContext"] = user
+            $_SESSION["userSortOrder"] = "name";
             $_SESSION["userTheme"] = $data[$user]["THEME"];
 
             exec(HESTIA_CMD . "v-list-sys-languages json", $languages, $return_var);
             $languages = json_decode(implode("", $languages), true);
-            $_SESSION["language"] = in_array($data[$user]["LANGUAGE"], $languages) ? $data[$user]["LANGUAGE"] : "en";
+            $_SESSION["language"] = in_array($data[$user]["LANGUAGE"], $languages) ? $data[$user]["LANGUAGE"] : "ru";
 
             // Regenerate session id to prevent session fixation
             session_regenerate_id(true);
 
             // Log successfull login attempt
             $v_session_id = quoteshellarg(session_id());
+
             exec(
                 HESTIA_CMD . "v-log-user-login " . $v_user . " " . $v_ip . " success " . $v_session_id . " " . $v_user_agent,
                 $output,
@@ -60,4 +64,4 @@ if (isset($_GET['user']) && isset($_GET['token']) && ($user = $_GET['user']) && 
 }
 
 // Redirect request to control panel interface
-header('Location: /list/user/');
+header('Location: /list/web/');
