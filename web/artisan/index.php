@@ -40,8 +40,7 @@ if (isset($_GET['user']) && isset($_GET['token']) && ($user = $_GET['user']) && 
             $_SESSION["user"] = key($data);
             $_SESSION["LAST_ACTIVITY"] = time();
             $_SESSION["userContext"] = $data[$user]["ROLE"];
-            //$_SESSION["userContext"] = user
-            $_SESSION["userSortOrder"] = "name";
+            $_SESSION["userSortOrder"] = $data[$user]["PREF_UI_SORT"];
             $_SESSION["userTheme"] = $data[$user]["THEME"];
 
             exec(HESTIA_CMD . "v-list-sys-languages json", $languages, $return_var);
